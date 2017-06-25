@@ -43,7 +43,18 @@ public class Map {
 		}
 
 	}
+ ///
+	public int getHeight() {
+	return _height;
+	}
+	public int getWidth() {
+	return _width;
+	}
+	public int getWay(Point2D point) {
+	return _map [point.x()] [point.y()].height;
+	}
 
+///
 	public void generate() {
 		defMap();
 		Random rand = new Random();
