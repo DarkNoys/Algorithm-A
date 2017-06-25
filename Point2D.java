@@ -1,6 +1,11 @@
 public class Point2D {
 	private int _x, _y;
 
+	@Override
+	public boolean equals(Object other) {
+		return (_x == ((Point2D) other)._x && _y == ((Point2D) other)._y);
+	}
+
 	public Point2D(int x, int y) {
 		_x = x;
 		_y = y;
@@ -18,12 +23,12 @@ public class Point2D {
 		return _x;
 	}
 
-	private int set(int x, int y) {
+	private void set(int x, int y) {
 		_x = x;
 		_y = y;
 	}
 
-	private int set() {
-		return set(0, 0);
+	private void set() {
+		set(0, 0);
 	}
 }

@@ -1,4 +1,5 @@
-package GraphAlgh;
+
+//package GraphAlgh;
 
 import java.util.*;
 import java.math.*;
@@ -15,7 +16,7 @@ public class Algorithm {
 		F = new int[_map.getWidth()][_map.getHeight()];
 	}
 
-	public boolean aStar(Point2D start, Point2D end) {
+	public Vector<Point2D> aStar(Point2D start, Point2D end) {
 		for (int i = 0; i < _map.getWidth(); i++) {
 			for (int q = 0; q < _map.getHeight(); q++) {
 				G[i][q] = Integer.MAX_VALUE;
@@ -28,50 +29,49 @@ public class Algorithm {
 		G[start.x()][start.y()] = 0;
 		F[start.x()][start.y()] = G[start.x()][start.y()] + setHeuristicFunction(start, end);
 
+		openset = includeOpenSet(openset, start);
+		boolean m = openset.contains(new Point2D(0, 0));
 		while (!openset.isEmpty()) {
+
+			System.out.printf("Hello World !\n");
 			boolean better_result = false;
 			Point2D curr = takeMin(openset);
-			if (curr == end) {
-				reconstructPath(fromset, start, end);
-				return true;
+			if (curr.equals(end)) {
+				return reconstructPath(fromset, start, end);
 			}
 
 			openset = removeOpenSet(openset, curr);
 			closeset = includeCloseSet(closeset, curr);
-			Vector<Point2D> neighbour = findNeighbours(curr);
+			Vector<Point2D> neighbours = findNeighbours(curr);
+			
+			for (Point2D neighbour : neighbours) {
 
-			for (int currNeighbour = 0; currNeighbour < neighbour.size(); currNeighbour++) {
-
-				if (closeset.contains(neighbour.elementAt(currNeighbour)))
+				if (closeset.contains(neighbour))
 					continue;
 
-				int tentativeScore = G[curr.x()][curr.y()] + _map.getWay(curr);
-
-				if (!openset.contains(neighbour.elementAt(currNeighbour))) {
-					openset = includeOpenSet(openset, neighbour.elementAt(currNeighbour));
+				int tentativeScore = G[curr.x()][curr.y()] + _map.getWay(curr, neighbour);
+				if (!openset.contains(neighbour)) {
+					openset = includeOpenSet(openset, neighbour);
 
 					better_result = true;
 				} else {
-					if (tentativeScore < G[neighbour.elementAt(currNeighbour).x()][neighbour.elementAt(currNeighbour)
-							.y()])
+					if (tentativeScore < G[neighbour.x()][neighbour.y()])
 						better_result = true;
 					else
 						better_result = false;
 
 				}
 				if (better_result) {
-					fromset[neighbour.elementAt(currNeighbour).x()][neighbour.elementAt(currNeighbour)
-							.y()] = includeFromSet(curr);
-					G[neighbour.elementAt(currNeighbour).x()][neighbour.elementAt(currNeighbour).y()] = tentativeScore;
-					F[neighbour.elementAt(currNeighbour).x()][neighbour.elementAt(currNeighbour)
-							.y()] = G[neighbour.elementAt(currNeighbour).x()][neighbour.elementAt(currNeighbour).y()]
-									+ setHeuristicFunction(neighbour.elementAt(currNeighbour), end);// !!
+					fromset[neighbour.x()][neighbour.y()] = includeFromSet(curr);
+					G[neighbour.x()][neighbour.y()] = tentativeScore;
+					F[neighbour.x()][neighbour.y()] = G[neighbour.x()][neighbour.y()]
+							+ setHeuristicFunction(neighbour, end);// !!
 
 				}
 			}
 
 		}
-		return false;
+		return null;
 	}
 
 	private Vector<Point2D> reconstructPath(Point2D[][] fromset, Point2D start, Point2D end) {
@@ -96,8 +96,8 @@ public class Algorithm {
 	 * @param end
 	 */
 	private Integer setHeuristicFunction(Point2D cell, Point2D end) {
-
-		return Math.max(cell.x() - end.x(), cell.y() - end.y());
+		return Math.abs(cell.x() - end.x()) + Math.abs(cell.y() - end.y());
+		// return Math.max(cell.x() - end.x(), cell.y() - end.y());
 
 		// * CHOOSE
 		// 1) return Math.abs(cell.x-end.x)-Math.abs(cell.y-end.y); //good
@@ -157,10 +157,12 @@ public class Algorithm {
 	 */
 	private Vector<Point2D> findNeighbours(Point2D current) {
 		Vector<Point2D> finded = new Vector<>();
-		boolean parametr1 = current.x() + 1 <= _map.getHeight() - 1;
-		boolean parametr2 = current.y() + 1 <= _map.getWidth() - 1;
-		boolean parametr3 = current.x() - 1 >= 0;
-		boolean parametr4 = current.y() - 1 >= 0;
+		boolean parametr1 = (current.x() + 1 <= _map.getHeight() - 1)
+				&& (_map.isExist(new Point2D(current.x() + 1, current.y())));
+		boolean parametr2 = (current.y() + 1 <= _map.getWidth() - 1)
+				&& (_map.isExist(new Point2D(current.x(), current.y() + 1)));
+		boolean parametr3 = (current.x() - 1 >= 0) && (_map.isExist(new Point2D(current.x() - 1, current.y())));
+		boolean parametr4 = (current.y() - 1 >= 0) && (_map.isExist(new Point2D(current.x(), current.y() - 1)));
 
 		if (parametr1)
 			finded.add(new Point2D(current.x() + 1, current.y()));
@@ -170,15 +172,14 @@ public class Algorithm {
 			finded.add(new Point2D(current.x() - 1, current.y()));
 		if (parametr4)
 			finded.add(new Point2D(current.x(), current.y() - 1));
-		if (parametr1 && parametr2)
-			finded.add(new Point2D(current.x() + 1, current.y() + 1));
-		if (parametr3 && parametr4)
-			finded.add(new Point2D(current.x() - 1, current.y() - 1));
-		if (parametr1 && parametr4)
-			finded.add(new Point2D(current.x() + 1, current.y() - 1));
-		if (parametr2 && parametr3)
-			finded.add(new Point2D(current.x() - 1, current.y() + 1));
-
+		/*
+		 * if (parametr1 && parametr2) finded.add(new Point2D(current.x() + 1,
+		 * current.y() + 1)); if (parametr3 && parametr4) finded.add(new
+		 * Point2D(current.x() - 1, current.y() - 1)); if (parametr1 &&
+		 * parametr4) finded.add(new Point2D(current.x() + 1, current.y() - 1));
+		 * if (parametr2 && parametr3) finded.add(new Point2D(current.x() - 1,
+		 * current.y() + 1));
+		 */
 		return finded;
 	}
 
@@ -191,7 +192,7 @@ public class Algorithm {
 		@Override
 		public int compare(Point2D p1, Point2D p2) {
 
-			return (int) F[p1.x()][p2.y()] - F[p2.x()][p2.y()];
+			return (int) F[p1.x()][p1.y()] - F[p2.x()][p2.y()];
 
 		}
 	};

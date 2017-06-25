@@ -28,7 +28,7 @@ public class Map {
 		FileOutputStream writer = new FileOutputStream("map.txt");
 		for (Node[] m : _map) {
 			for (Node p : m) {
-				writer.write((p.exist ? "1 " : "0 ").getBytes());
+				writer.write((p.exist ? (Integer.toString(p.height)+" ") : "0 ").getBytes());
 			}
 			writer.write("\n".getBytes());
 		}
@@ -43,18 +43,27 @@ public class Map {
 		}
 
 	}
- ///
+
 	public int getHeight() {
-	return _height;
-	}
-	public int getWidth() {
-	return _width;
-	}
-	public int getWay(Point2D point) {
-	return _map [point.x()] [point.y()].height;
+		return _height;
 	}
 
-///
+	public int getWidth() {
+		return _width;
+	}
+
+	public int getHeight(Point2D point) {
+		return _map[point.x()][point.y()].height;
+	}
+
+	public void setHeight(Point2D point, int height) {
+		_map[point.x()][point.y()].height = height;
+	}
+
+	public int getWay(Point2D point1, Point2D point2) {
+		return Math.abs(getHeight(point1) - getHeight(point2)) + 1;
+	}
+
 	public void generate() {
 		defMap();
 		Random rand = new Random();
@@ -68,15 +77,19 @@ public class Map {
 
 		for (int i = 0; i < numUpdates; i++) {
 			for (int j = 0; j < seedPos.length; j++) {
-				switch(Math.abs(rand.nextInt()) % 4) {
-				
-				case 0: seedPos[j] -= _width;
+				switch (Math.abs(rand.nextInt()) % 4) {
+
+				case 0:
+					seedPos[j] -= _width;
 					break;
-				case 1: seedPos[j]++;
+				case 1:
+					seedPos[j]++;
 					break;
-				case 2: seedPos[j] += _width;
+				case 2:
+					seedPos[j] += _width;
 					break;
-				case 3:	seedPos[j]--;
+				case 3:
+					seedPos[j]--;
 					break;
 				}
 
