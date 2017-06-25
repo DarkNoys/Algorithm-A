@@ -1,4 +1,4 @@
-﻿package GraphAlgh;
+package GraphAlgh;
 
 import java.util.*;
 import java.math.*;
