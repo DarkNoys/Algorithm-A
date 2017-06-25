@@ -1,4 +1,5 @@
 import java.util.Random;
+import java.awt.Point;
 import java.io.*;
 
 public class Map {
@@ -10,18 +11,18 @@ public class Map {
 		this(DEF_SIZE, DEF_SIZE);
 	}
 
-	public Map(int height, int width) {
+	public Map(int width, int height) {
 		_height = height;
 		_width = width;
 		defMap();
 	}
 
-	public boolean isExist(Point2D point) throws NullPointerException {
-		return _map[point.x()][point.y()].exist;
+	public boolean isExist(Point point) throws NullPointerException {
+		return _map[point.x][point.y].exist;
 	}
 
-	public void setExist(Point2D point, boolean exist) {
-		_map[point.x()][point.y()].exist = exist;
+	public void setExist(Point point, boolean exist) {
+		_map[point.x][point.y].exist = exist;
 	}
 
 	public void print() throws IOException {
@@ -52,15 +53,15 @@ public class Map {
 		return _width;
 	}
 
-	public int getHeight(Point2D point) {
-		return _map[point.x()][point.y()].height;
+	public int getHeight(Point point) {
+		return _map[point.x][point.y].height;
 	}
 
-	public void setHeight(Point2D point, int height) {
-		_map[point.x()][point.y()].height = height;
+	public void setHeight(Point point, int height) {
+		_map[point.x][point.y].height = height;
 	}
 
-	public int getWay(Point2D point1, Point2D point2) {
+	public int getWay(Point point1, Point point2) {
 		return Math.abs(getHeight(point1) - getHeight(point2)) + 1;
 	}
 
@@ -72,7 +73,7 @@ public class Map {
 
 		for (int i = 0; i < seedPos.length; i++) {
 			seedPos[i] = Math.abs(rand.nextInt() % (_height * _width));
-			setExist(new Point2D(seedPos[i] % _width, seedPos[i] / _width), false);
+			setExist(new Point(seedPos[i] % _width, seedPos[i] / _width), false);
 		}
 
 		for (int i = 0; i < numUpdates; i++) {
@@ -94,7 +95,7 @@ public class Map {
 				}
 
 				if (!(seedPos[j] < 0 || seedPos[j] >= (_height * _width))) {
-					setExist(new Point2D(seedPos[j] % _width, seedPos[j] / _width), false);
+					setExist(new Point(seedPos[j] % _width, seedPos[j] / _width), false);
 				}
 			}
 		}
