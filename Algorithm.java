@@ -30,10 +30,8 @@ public class Algorithm {
 		F[start.x()][start.y()] = G[start.x()][start.y()] + setHeuristicFunction(start, end);
 
 		openset = includeOpenSet(openset, start);
-		boolean m = openset.contains(new Point2D(0, 0));
 		while (!openset.isEmpty()) {
 
-			System.out.printf("Hello World !\n");
 			boolean better_result = false;
 			Point2D curr = takeMin(openset);
 			if (curr.equals(end)) {
