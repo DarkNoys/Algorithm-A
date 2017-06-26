@@ -5,8 +5,8 @@ import javax.swing.JComponent;
 
 public class Canvas extends JComponent {
 		
-	Graphics2D g2d;
-	Point coordStart, coordFinish;
+	private Graphics2D g2d;
+	private Point coordStart, coordFinish;
 	Algorithm alg;
 	
 	
@@ -51,7 +51,7 @@ public class Canvas extends JComponent {
 		
 		coord.x = newcoord.x - (newcoord.x % 10);
 		coord.y = newcoord.y - (newcoord.y % 10);
-		drawPoint(coord, (Type) ? Color.blue : Color.green);
+		drawPoint(coord, (Type) ? Color.blue : new Color(7, 210, 7));
 		
 		return coord;
 	}

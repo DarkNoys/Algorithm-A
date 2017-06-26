@@ -1,4 +1,3 @@
-
 //package GraphAlgh;
 
 import java.util.*;
@@ -18,18 +17,13 @@ public class Algorithm {
 	}
 
 	public Vector<Point> aStar(Point start, Point end) {
-		for (int i = 0; i < _map.getWidth(); i++) {
-			for (int q = 0; q < _map.getHeight(); q++) {
-				G[i][q] = Integer.MAX_VALUE;
-				F[i][q] = Integer.MAX_VALUE;
-			}
-		}
 		Vector<Point> closeset = new Vector<>();
 		Point[][] fromset = new Point[_map.getWidth()][_map.getHeight()];
-		Queue<Point> openset = new PriorityQueue<>(_map.getWidth() * _map.getHeight(), fieldComparator);
+		Queue<Point> openset = new PriorityQueue<>(_map.getWidth()
+				* _map.getHeight(), fieldComparator);
 		G[start.x][start.y] = 0;
-		F[start.x][start.y] = G[start.x][start.y] + setHeuristicFunction(start, end);
-
+		F[start.x][start.y] = G[start.x][start.y]
+				+ setHeuristicFunction(start, end);
 		openset = includeOpenSet(openset, start);
 		while (!openset.isEmpty()) {
 
@@ -42,15 +36,15 @@ public class Algorithm {
 			openset = removeOpenSet(openset, curr);
 			closeset = includeCloseSet(closeset, curr);
 			Vector<Point> neighbours = findNeighbours(curr);
-			
+
 			for (Point neighbour : neighbours) {
 
 				if (closeset.contains(neighbour))
 					continue;
 
-				int tentativeScore = G[curr.x][curr.y] + _map.getWay(curr, neighbour);
+				int tentativeScore = G[curr.x][curr.y]
+						+ _map.getWay(curr, neighbour);
 				if (!openset.contains(neighbour)) {
-					openset = includeOpenSet(openset, neighbour);
 
 					better_result = true;
 				} else {
@@ -64,8 +58,9 @@ public class Algorithm {
 					fromset[neighbour.x][neighbour.y] = includeFromSet(curr);
 					G[neighbour.x][neighbour.y] = tentativeScore;
 					F[neighbour.x][neighbour.y] = G[neighbour.x][neighbour.y]
-							+ setHeuristicFunction(neighbour, end);// !!
-
+							+ setHeuristicFunction(neighbour, end);
+					if (!openset.contains(neighbour))
+						openset = includeOpenSet(openset, neighbour);
 				}
 			}
 
@@ -73,7 +68,8 @@ public class Algorithm {
 		return null;
 	}
 
-	protected Vector<Point> reconstructPath(Point[][] fromset, Point start, Point end) {
+	protected Vector<Point> reconstructPath(Point[][] fromset, Point start,
+			Point end) {
 		Vector<Point> pathset = new Vector<>();
 
 		Point curr = end;
@@ -96,13 +92,15 @@ public class Algorithm {
 	 */
 	protected Integer setHeuristicFunction(Point cell, Point end) {
 		return Math.abs(cell.x - end.x) + Math.abs(cell.y - end.y);
+		// return 0;
 		// return Math.max(cell.x - end.x, cell.y - end.y);
 
 		// * CHOOSE
 		// 1) return Math.abs(cell.x-end.x)-Math.abs(cell.y-end.y); //good
-		// 2) return Math.max(cell.x-end.x,cell.y-end.y ); //also good (mby
+		// return Math.max(cell.x-end.x,cell.y-end.y ); //also good (mby
 		// greatest)
 		// 3) return
+		// return (int)
 		// Math.sqrt(((cell.x-end.x)*(cell.x-end.x)+(cell.y-end.y)*(cell.y-end.y)));
 		// meh
 
@@ -115,7 +113,8 @@ public class Algorithm {
 	 * @param current
 	 * @return
 	 */
-	protected Vector<Point> includeCloseSet(Vector<Point> closeset, Point current) {
+	protected Vector<Point> includeCloseSet(Vector<Point> closeset,
+			Point current) {
 		closeset.add(current);
 		return closeset;
 		// ! return closeset.add(current) -ERROR
@@ -162,24 +161,23 @@ public class Algorithm {
 		boolean parametr4 = (current.y - 1 >= 0);
 
 		if (parametr1)
-			if (_map.isExist(new Point(current.x + 1, current.y))) 
-			finded.add(new Point(current.x + 1, current.y));
+			if (_map.isExist(new Point(current.x + 1, current.y)))
+				finded.add(new Point(current.x + 1, current.y));
 		if (parametr2)
 			if (_map.isExist(new Point(current.x, current.y + 1)))
-			finded.add(new Point(current.x, current.y + 1));
+				finded.add(new Point(current.x, current.y + 1));
 		if (parametr3)
 			if (_map.isExist(new Point(current.x - 1, current.y)))
-			finded.add(new Point(current.x - 1, current.y));
+				finded.add(new Point(current.x - 1, current.y));
 		if (parametr4)
 			if (_map.isExist(new Point(current.x, current.y - 1)))
-			finded.add(new Point(current.x, current.y - 1));
+				finded.add(new Point(current.x, current.y - 1));
 		/*
 		 * if (parametr1 && parametr2) finded.add(new Point(current.x + 1,
 		 * current.y + 1)); if (parametr3 && parametr4) finded.add(new
-		 * Point(current.x - 1, current.y - 1)); if (parametr1 &&
-		 * parametr4) finded.add(new Point(current.x + 1, current.y - 1));
-		 * if (parametr2 && parametr3) finded.add(new Point(current.x - 1,
-		 * current.y + 1));
+		 * Point(current.x - 1, current.y - 1)); if (parametr1 && parametr4)
+		 * finded.add(new Point(current.x + 1, current.y - 1)); if (parametr2 &&
+		 * parametr3) finded.add(new Point(current.x - 1, current.y + 1));
 		 */
 		return finded;
 	}
@@ -193,7 +191,7 @@ public class Algorithm {
 		@Override
 		public int compare(Point p1, Point p2) {
 
-			return (int) F[p1.x][p1.y] - F[p2.x][p2.y];
+			return (int) (F[p1.x][p1.y] - F[p2.x][p2.y]);
 
 		}
 	};
