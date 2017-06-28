@@ -6,7 +6,6 @@ public class Canvas extends JComponent {
 	private static final long serialVersionUID = 1L;
 	private Graphics2D g2d;
 	private Point coordStart, coordFinish;
-	Algorithm alg;
 
 	public static final int CANVAS_WIDTH = 700;
 	public static final int CANVAS_HEIGHT = 500;

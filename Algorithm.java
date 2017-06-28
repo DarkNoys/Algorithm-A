@@ -13,6 +13,14 @@ public class Algorithm {
 		F = new int[_map.getWidth()][_map.getHeight()];
 	}
 
+	public void generateMap() {
+		_map.generate();
+	}
+	
+	public Map getMap() {
+		return _map;
+	}
+
 	public Vector<Point> aStar(Point start, Point end) {
 		Vector<Point> closeset = new Vector<>();
 		Point[][] fromset = new Point[_map.getWidth()][_map.getHeight()];
@@ -176,5 +184,6 @@ public class Algorithm {
 
 		}
 	};
+
 
 }

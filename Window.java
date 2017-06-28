@@ -11,7 +11,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-public class Window extends Algorithm {
+public class Window {
 
 	private static final int WINDOW_WIDTH = 1000;
 	private static final int WINDOW_HEIGHT = 600;
@@ -24,9 +24,34 @@ public class Window extends Algorithm {
 	private Point saveStart, saveFinish;
 	private JFrame frame;
 
-	public Window() {
-		super(new Map(Canvas.CANVAS_WIDTH / 10, Canvas.CANVAS_HEIGHT / 10));
-	}
+	private Algorithm alg = new Algorithm(new Map(Canvas.CANVAS_WIDTH / 10,
+			Canvas.CANVAS_HEIGHT / 10)) {
+		@Override
+		protected Queue<Point> includeOpenSet(Queue<Point> openset,
+				Point current) {
+			if (!(current.equals(saveStart)) && !(current.equals(saveFinish)))
+				canvas.drawPoint(new Point(current.x * Canvas.POINT_SIZE,
+						current.y * Canvas.POINT_SIZE), new Color(5, 75, 140));
+
+			return super.includeOpenSet(openset, current);
+		}
+
+		@Override
+		protected Vector<Point> includeCloseSet(Vector<Point> closeset,
+				Point current) {
+			if (!(current.equals(saveStart)) && !(current.equals(saveFinish)))
+				canvas.drawPoint(new Point(current.x * Canvas.POINT_SIZE,
+						current.y * Canvas.POINT_SIZE),
+						new Color(129, 184, 234));
+			try {
+				Thread.sleep(DELAY);
+			} catch (Exception e) {
+
+			}
+			return super.includeCloseSet(closeset, current);
+		}
+
+	};
 
 	public void init() {
 		frame = new JFrame("Algorithm A*");
@@ -80,29 +105,6 @@ public class Window extends Algorithm {
 		frame.setVisible(true);
 	}
 
-	@Override
-	protected Queue<Point> includeOpenSet(Queue<Point> openset, Point current) {
-		if (!(current.equals(saveStart)) && !(current.equals(saveFinish)))
-			canvas.drawPoint(new Point(current.x * Canvas.POINT_SIZE, current.y * Canvas.POINT_SIZE),
-					new Color(5, 75, 140));  
-		
-		return super.includeOpenSet(openset, current);
-	}
-
-	@Override
-	protected Vector<Point> includeCloseSet(Vector<Point> closeset,
-			Point current) {
-		if (!(current.equals(saveStart)) && !(current.equals(saveFinish)))
-			canvas.drawPoint(new Point(current.x * Canvas.POINT_SIZE, current.y * Canvas.POINT_SIZE),
-					new Color(129, 184, 234));
-		try {
-			Thread.sleep(DELAY);
-		} catch (Exception e) {
-
-		}
-		return super.includeCloseSet(closeset, current);
-	}
-
 	private void printWay(Vector<Point> way) {
 		if (way == null) {
 			JOptionPane.showMessageDialog(frame, "There is not way!");
@@ -111,7 +113,8 @@ public class Window extends Algorithm {
 
 		for (Point p : way) {
 			if (!(p.equals(saveStart)) && !(p.equals(saveFinish)))
-				canvas.drawPoint(new Point(p.x * Canvas.POINT_SIZE, p.y * Canvas.POINT_SIZE), new Color(217, 39, 39));
+				canvas.drawPoint(new Point(p.x * Canvas.POINT_SIZE, p.y
+						* Canvas.POINT_SIZE), new Color(217, 39, 39));
 		}
 	}
 
@@ -124,8 +127,8 @@ public class Window extends Algorithm {
 		public void mouseClicked(MouseEvent e) {
 			saveStart = null;
 			saveFinish = null;
-			_map.generate();
-			canvas.drawMap(_map);
+			alg.generateMap();
+			canvas.drawMap(alg.getMap());
 		}
 
 		public void mouseEntered(MouseEvent e) {
@@ -145,7 +148,7 @@ public class Window extends Algorithm {
 
 		public void mouseClicked(MouseEvent e) {
 			if (saveStart != null && saveFinish != null) {
-				printWay(aStar(saveStart, saveFinish));
+				printWay(alg.aStar(saveStart, saveFinish));
 			} else
 				JOptionPane.showMessageDialog(frame,
 						"There is no start and / or finish!");
@@ -169,7 +172,7 @@ public class Window extends Algorithm {
 		public void mouseClicked(MouseEvent e) {
 			saveStart = null;
 			saveFinish = null;
-			canvas.drawMap(_map);
+			canvas.drawMap(alg.getMap());
 		}
 
 		public void mouseEntered(MouseEvent e) {
@@ -189,10 +192,11 @@ public class Window extends Algorithm {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
+
 			Integer x = e.getX();
 			Integer y = e.getY();
 
-			if (_map.isExist(new Point(correctCoordtoMap(x),
+			if ((alg.getMap()).isExist(new Point(correctCoordtoMap(x),
 					correctCoordtoMap(y)))) {
 				if (e.getButton() == MouseEvent.BUTTON1) {
 					saveStart = new Point(correctCoordtoMap(x),
