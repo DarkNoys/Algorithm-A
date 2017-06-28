@@ -1,5 +1,4 @@
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -26,15 +25,13 @@ public class Window extends Algorithm {
 	private JFrame frame;
 
 	public Window() {
-		super(new Map(70, 50));
+		super(new Map(Canvas.CANVAS_WIDTH / 10, Canvas.CANVAS_HEIGHT / 10));
 	}
 
 	public void init() {
 		frame = new JFrame("Algorithm A*");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
-		frame.setMinimumSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
-		frame.setMaximumSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
 		frame.setResizable(false);
 		frame.setLocationRelativeTo(null);
 		frame.setLayout(new GridBagLayout());
@@ -62,21 +59,12 @@ public class Window extends Algorithm {
 
 		c.gridx = 0;
 		c.gridy = 1;
-		c.weightx = PROPOTION_RIGHT;
-		c.weighty = PROPOTION_TOP;
-		c.anchor = GridBagConstraints.NORTH;
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.insets = insets;
 		frame.add(runButton, c);
 		runButton.addMouseListener(new RunListener());
 
 		c.gridx = 0;
 		c.gridy = 2;
-		c.weightx = PROPOTION_RIGHT;
 		c.weighty = 1 - 2 * PROPOTION_TOP;
-		c.anchor = GridBagConstraints.NORTH;
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.insets = insets;
 		frame.add(clearButton, c);
 		clearButton.addMouseListener(new ClearListener());
 
@@ -85,7 +73,7 @@ public class Window extends Algorithm {
 		c.gridheight = 3;
 		c.weightx = 1 - PROPOTION_RIGHT;
 		c.fill = GridBagConstraints.BOTH;
-		c.insets = new Insets(30, 10, 10, 10);
+		c.insets = new Insets(30, 10, 45, 45);
 		frame.add(canvas, c);
 		canvas.addMouseListener(new SelectStartEndListener());
 
@@ -95,8 +83,8 @@ public class Window extends Algorithm {
 	@Override
 	protected Queue<Point> includeOpenSet(Queue<Point> openset, Point current) {
 		if (!(current.equals(saveStart)) && !(current.equals(saveFinish)))
-			canvas.drawPoint(new Point(current.x * 10, current.y * 10),
-					new Color(5, 75, 140));  //очень красивый
+			canvas.drawPoint(new Point(current.x * Canvas.POINT_SIZE, current.y * Canvas.POINT_SIZE),
+					new Color(5, 75, 140));  
 		
 		return super.includeOpenSet(openset, current);
 	}
@@ -105,7 +93,7 @@ public class Window extends Algorithm {
 	protected Vector<Point> includeCloseSet(Vector<Point> closeset,
 			Point current) {
 		if (!(current.equals(saveStart)) && !(current.equals(saveFinish)))
-			canvas.drawPoint(new Point(current.x * 10, current.y * 10),
+			canvas.drawPoint(new Point(current.x * Canvas.POINT_SIZE, current.y * Canvas.POINT_SIZE),
 					new Color(129, 184, 234));
 		try {
 			Thread.sleep(DELAY);
@@ -123,12 +111,12 @@ public class Window extends Algorithm {
 
 		for (Point p : way) {
 			if (!(p.equals(saveStart)) && !(p.equals(saveFinish)))
-				canvas.drawPoint(new Point(p.x * 10, p.y * 10), new Color(217, 39, 39));
+				canvas.drawPoint(new Point(p.x * Canvas.POINT_SIZE, p.y * Canvas.POINT_SIZE), new Color(217, 39, 39));
 		}
 	}
 
 	private int correctCoordtoMap(int x) {
-		return (x - x % 10) / 10;
+		return (x - x % Canvas.POINT_SIZE) / Canvas.POINT_SIZE;
 	}
 
 	public class GenerateListener implements MouseListener {

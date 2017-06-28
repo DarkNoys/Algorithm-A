@@ -1,13 +1,10 @@
-//package GraphAlgh;
-
 import java.util.*;
 import java.awt.Point;
-import java.math.*;
 
 public class Algorithm {
 
 	/**
-	 * aStar Alg
+	 * aStar Algorithm
 	 * 
 	 */
 	public Algorithm(Map map) {
@@ -61,6 +58,10 @@ public class Algorithm {
 							+ setHeuristicFunction(neighbour, end);
 					if (!openset.contains(neighbour))
 						openset = includeOpenSet(openset, neighbour);
+					else {
+						openset = removeOpenSet(openset, neighbour);
+						openset = includeOpenSet(openset, neighbour);
+					}
 				}
 			}
 
@@ -92,18 +93,6 @@ public class Algorithm {
 	 */
 	protected Integer setHeuristicFunction(Point cell, Point end) {
 		return Math.abs(cell.x - end.x) + Math.abs(cell.y - end.y);
-		// return 0;
-		// return Math.max(cell.x - end.x, cell.y - end.y);
-
-		// * CHOOSE
-		// 1) return Math.abs(cell.x-end.x)-Math.abs(cell.y-end.y); //good
-		// return Math.max(cell.x-end.x,cell.y-end.y ); //also good (mby
-		// greatest)
-		// 3) return
-		// return (int)
-		// Math.sqrt(((cell.x-end.x)*(cell.x-end.x)+(cell.y-end.y)*(cell.y-end.y)));
-		// meh
-
 	}
 
 	/**
@@ -117,7 +106,6 @@ public class Algorithm {
 			Point current) {
 		closeset.add(current);
 		return closeset;
-		// ! return closeset.add(current) -ERROR
 	}
 
 	/**
@@ -129,7 +117,7 @@ public class Algorithm {
 	 */
 
 	protected Queue<Point> removeOpenSet(Queue<Point> openset, Point current) {
-		openset.remove();
+		openset.remove(current);
 		return openset;
 	}
 
@@ -172,13 +160,6 @@ public class Algorithm {
 		if (parametr4)
 			if (_map.isExist(new Point(current.x, current.y - 1)))
 				finded.add(new Point(current.x, current.y - 1));
-		/*
-		 * if (parametr1 && parametr2) finded.add(new Point(current.x + 1,
-		 * current.y + 1)); if (parametr3 && parametr4) finded.add(new
-		 * Point(current.x - 1, current.y - 1)); if (parametr1 && parametr4)
-		 * finded.add(new Point(current.x + 1, current.y - 1)); if (parametr2 &&
-		 * parametr3) finded.add(new Point(current.x - 1, current.y + 1));
-		 */
 		return finded;
 	}
 

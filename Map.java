@@ -1,8 +1,8 @@
 import java.util.Random;
 import java.awt.Point;
-import java.io.*;
 
 public class Map {
+
 	public final static int DEF_SIZE = 10;
 	public final static int N_SEED = 30;
 	public final static int N_UPDATE = 50;
@@ -23,16 +23,6 @@ public class Map {
 
 	public void setExist(Point point, boolean exist) {
 		_map[point.x][point.y].exist = exist;
-	}
-
-	public void print() throws IOException {
-		FileOutputStream writer = new FileOutputStream("map.txt");
-		for (Node[] m : _map) {
-			for (Node p : m) {
-				writer.write((p.exist ? (Integer.toString(p.height)+" ") : "0 ").getBytes());
-			}
-			writer.write("\n".getBytes());
-		}
 	}
 
 	private void defMap() {
@@ -95,15 +85,12 @@ public class Map {
 				}
 
 				if (!(seedPos[j] < 0 || seedPos[j] >= (_height * _width))) {
-					setExist(new Point(seedPos[j] % _width, seedPos[j] / _width), false);
+					setExist(
+							new Point(seedPos[j] % _width, seedPos[j] / _width),
+							false);
 				}
 			}
 		}
-
-		// Отображение мини-карты
-		// vRenderMinimap();
-		// Воспроизведение звука, сообщающего о завершении операции
-
 	}
 
 	private class Node {
